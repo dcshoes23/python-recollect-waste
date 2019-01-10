@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.0.1",
     author="stealthhacker",
     description="Python 3 API for Recollect Waste to track waste pickup and types.",
-    url="https://github.com/stealthhacker/recollect-waste",
+    url="https://github.com/stealthhacker/python-recollect-waste",
     packages=['recollect_waste'],
     classifiers=[
         "Programming Language :: Python :: 3",
