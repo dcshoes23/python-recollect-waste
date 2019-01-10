@@ -1,0 +1,5 @@
+[MASTER]
+reports=no
+ignore=
+disable=I
+max-line-length=130
