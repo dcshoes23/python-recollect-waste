@@ -7,14 +7,14 @@ class TestRecollectWaste:
         place_id = '85E562F0-49EC-11E6-A261-153143E100E1'
         service_id = 339
         client = recollect_waste.RecollectWasteClient(place_id, service_id)
-        pickupevent = client.get_next_pickup()
+        pickup_event = client.get_next_pickup()
 
-        assert hasattr(pickupevent, 'event_date')
-        assert type(pickupevent.event_date) is date
+        assert hasattr(pickup_event, 'event_date')
+        assert type(pickup_event.event_date) is date
 
-        assert hasattr(pickupevent, 'pickup_types')
-        assert type(pickupevent.pickup_types) is list
-        assert len(pickupevent.pickup_types) > 0
+        assert hasattr(pickup_event, 'pickup_types')
+        assert type(pickup_event.pickup_types) is list
+        assert len(pickup_event.pickup_types) > 0
 
-        assert hasattr(pickupevent, 'area_name')
-        assert pickupevent.area_name == "Abbotsford"
+        assert hasattr(pickup_event, 'area_name')
+        assert pickup_event.area_name == "Abbotsford"
