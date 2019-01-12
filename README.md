@@ -30,7 +30,7 @@ client = recollect_waste.RecollectWasteClient("place_id","service_id")
 pickup_event = client.get_next_pickup()
 
 # Get pickup events between two dates
-pickup_events = client.get_pickup_events(datetime.date(2019, 1, 01),datetime.date(2019, 2, 1))
+pickup_events = client.get_pickup_events(datetime.date(2019, 1, 1),datetime.date(2019, 2, 1))
 ```
 
 ## Development
