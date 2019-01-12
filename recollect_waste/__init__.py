@@ -1,7 +1,6 @@
 """Recollect Waste"""
-
+from datetime import datetime
 from datetime import timedelta
-import datetime
 import json
 import requests
 
@@ -23,13 +22,13 @@ class RecollectWasteClient():
 
     def get_next_pickup(self):
         """Get the next pickup using today's date"""
-        todays_date = datetime.datetime.today()
+        todays_date = datetime.today()
         events = self.get_pickup_events(todays_date, todays_date + timedelta(weeks=4))
         return events[0] if events.__sizeof__() > 0 else None
 
     def get_todays_pickups(self):
         """Get today's pickups if there is one using today's date"""
-        todays_date = datetime.datetime.today()
+        todays_date = datetime.today()
         return self.get_pickup_events(todays_date, todays_date + timedelta(days=1))
 
     def get_pickup_events(self, start_date, end_date):
@@ -46,13 +45,14 @@ class RecollectWasteClient():
             if 'flags' not in event.keys():
                 continue
 
-            pickup_event = PickupEvent(event['day'])
+            event_date = datetime.strptime(event['day'], '%Y-%m-%d')
+            pickup_event = PickupEvent(event_date)
             pickup_events.append(pickup_event)
 
             for flag in event['flags']:
                 # We only want pickup event types
                 if flag['event_type'] == 'pickup':
                     pickup_event.pickup_types.append(flag['name'])
-                    pickup_event.area_name = ['area_name']
+                    pickup_event.area_name = flag['area_name']
 
         return pickup_events
