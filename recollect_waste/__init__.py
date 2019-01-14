@@ -28,11 +28,6 @@ class RecollectWasteClient():
         events = self.get_pickup_events(todays_date, todays_date + timedelta(weeks=4))
         return events[0] if events.__sizeof__() > 0 else None
 
-    def get_todays_pickups(self):
-        """Get today's pickups if there is one using today's date"""
-        todays_date = datetime.today()
-        return self.get_pickup_events(todays_date, todays_date + timedelta(days=1))
-
     def get_pickup_events(self, start_date, end_date):
         """Get the pickups from the recollect waste website"""
         session = requests.session()
