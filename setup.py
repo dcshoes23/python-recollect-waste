@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="recollect_waste",
-    version="1.0.0",
+    version="1.0.1",
     author="stealthhacker",
     description="Python 3 API for Recollect Waste to track waste pickup and types.",
     long_description="Refer to Github for a full description.",

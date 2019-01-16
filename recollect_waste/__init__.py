@@ -1,8 +1,8 @@
 """Recollect Waste"""
 from datetime import datetime
-from datetime import date
 from datetime import timedelta
 import json
+from json.decoder import JSONDecodeError
 import requests
 
 API_URL = 'https://api.recollect.net/api/places/{}/services/{}/events?after={}&before={}'
@@ -30,26 +30,44 @@ class RecollectWasteClient():
 
     def get_pickup_events(self, start_date, end_date):
         """Get the pickups from the recollect waste website"""
-        session = requests.session()
-        request_url = API_URL.format(self.place_id, self.service_id, start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
-        resp = session.get(request_url)
-        json_object = json.loads(resp.text)
+        resp = None
+        try:
+            session = requests.session()
+            request_url = API_URL.format(self.place_id, self.service_id, start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d"))
+            resp = session.get(request_url)
+            resp.raise_for_status()
+        except requests.exceptions.HTTPError as ex:
+            raise RecollectWasteException("HTTP Error:", ex)
+        except requests.exceptions.ConnectionError as ex:
+            raise RecollectWasteException("Error Connecting:", ex)
+        except requests.exceptions.Timeout as ex:
+            raise RecollectWasteException("Timeout Error:", ex)
+        except requests.exceptions.RequestException as ex:
+            raise RecollectWasteException('An exception occured:', ex)
 
-        # Get all the events and their flags
-        pickup_events = []
-        for event in json_object['events']:
-            # Some times there are events without a flags key
-            if 'flags' not in event.keys():
-                continue
+        try:
+            json_object = json.loads(resp.text)
 
-            event_date = datetime.strptime(event['day'], '%Y-%m-%d').date()
-            pickup_event = PickupEvent(event_date)
-            pickup_events.append(pickup_event)
+            # Get all the events and their flags
+            pickup_events = []
+            for event in json_object['events']:
+                # Some times there are events without a flags key
+                if 'flags' not in event.keys():
+                    continue
 
-            for flag in event['flags']:
-                # We only want pickup event types
-                if flag['event_type'] == 'pickup':
-                    pickup_event.pickup_types.append(flag['name'])
-                    pickup_event.area_name = flag['area_name']
+                event_date = datetime.strptime(event['day'], '%Y-%m-%d').date()
+                pickup_event = PickupEvent(event_date)
+                pickup_events.append(pickup_event)
 
-        return pickup_events
+                for flag in event['flags']:
+                    # We only want pickup event types
+                    if flag['event_type'] == 'pickup':
+                        pickup_event.pickup_types.append(flag['name'])
+                        pickup_event.area_name = flag['area_name']
+
+            return pickup_events
+        except JSONDecodeError as ex:
+            raise RecollectWasteException('Failed to parse json: ', ex)
+
+class RecollectWasteException(Exception):
+    """Recollect Waste error."""

@@ -1,11 +1,13 @@
 # tests for recollect_waste
 import recollect_waste
+from recollect_waste import RecollectWasteException
 from datetime import date
+import pytest
 
 class TestRecollectWaste:
     def test_get_next_pickup(self):
         place_id = '85E562F0-49EC-11E6-A261-153143E100E1'
-        service_id = 339
+        service_id = '339'
         client = recollect_waste.RecollectWasteClient(place_id, service_id)
         pickup_event = client.get_next_pickup()
 
@@ -18,3 +20,10 @@ class TestRecollectWaste:
 
         assert hasattr(pickup_event, 'area_name')
         assert pickup_event.area_name == "Abbotsford"
+
+    def test_get_next_pickup_exception(self):
+        with pytest.raises(RecollectWasteException):
+            place_id = '1234567890'
+            service_id = '1234567890'
+            client = recollect_waste.RecollectWasteClient(place_id, service_id)
+            pickup_event = client.get_next_pickup()
