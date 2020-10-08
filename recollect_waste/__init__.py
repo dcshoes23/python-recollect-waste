@@ -60,6 +60,10 @@ class RecollectWasteClient():
                 pickup_events.append(pickup_event)
 
                 for flag in event['flags']:
+                    # Some times there are flags without event_type
+                    if 'event_type' not in flag:
+                        continue
+                    
                     # We only want pickup event types
                     if flag['event_type'] == 'pickup':
                         pickup_event.pickup_types.append(flag['name'])
