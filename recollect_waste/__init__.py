@@ -57,7 +57,6 @@ class RecollectWasteClient():
 
                 event_date = datetime.strptime(event['day'], '%Y-%m-%d').date()
                 pickup_event = PickupEvent(event_date)
-                pickup_events.append(pickup_event)
 
                 for flag in event['flags']:
                     # Some times there are flags without event_type
@@ -68,6 +67,12 @@ class RecollectWasteClient():
                     if flag['event_type'] == 'pickup':
                         pickup_event.pickup_types.append(flag['name'])
                         pickup_event.area_name = flag['area_name']
+
+                # skip this event if it doesn't have any pickup types
+                if len(pickup_event.pickup_types) == 0:
+                    continue
+
+                pickup_events.append(pickup_event)
 
             return pickup_events
         except JSONDecodeError as ex:
